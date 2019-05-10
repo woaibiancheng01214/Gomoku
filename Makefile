@@ -12,7 +12,7 @@ all: run clean
 	@$(JVM) $(JFLAGS) Oxo
 
 border: BorderPaneExample.java
-	@$(JC) $(JFLAGS) BorderPaneExample.java
+	@$(JC) $(JFLAGS) State.java Display.java Type.java CheckInfo.java BorderPaneExample.java
 	@$(JVM) $(JFLAGS) BorderPaneExample
 run:
 	

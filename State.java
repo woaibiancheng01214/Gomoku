@@ -54,29 +54,6 @@ class State{
             }
         }
     }
-    
-    // check if the input is strictly same as [a-c][1-3] or [1-3][a-c]
-    public CheckInfo validateMove(String s){
-        if(s.length() != 2){
-            for(char c: s.toCharArray()){
-                System.out.println(c);
-            }
-            return CheckInfo.invalidLength;
-        }
-        // match [a-c][1-3] (digit and character)
-        if(Character.isDigit(s.charAt(0)) == true && 
-            Character.isLowerCase(s.charAt(1)) == true){
-                parseCoordinate(s);
-                return checkExistAndOutOfBoard();
-        }
-        // match [1-3][a-c] (character and digit)
-        if(Character.isDigit(s.charAt(1)) == true && 
-            Character.isLowerCase(s.charAt(0)) == true){
-                parseCoordinate(s);
-                return checkExistAndOutOfBoard();
-        }
-        return CheckInfo.invalidType;
-    }
 
     public CheckInfo checkExistAndOutOfBoard(){
         if(coorCol < 0 || coorRow < 0 || coorCol >= HLIMIT || coorRow >= WLIMIT){
@@ -86,22 +63,6 @@ class State{
             return CheckInfo.alreadyExist;
         }
         return CheckInfo.valid;
-    }
-
-    // Translate String coordinate into the index of actual 2D array board
-    // the caller method only pass valid strings to this method(like 1c 3a) 
-    private void parseCoordinate(String s){
-        
-        int c1 = s.charAt(0);
-        int c2 = s.charAt(1);
-        if(Character.isDigit(c1)){
-            coorRow = c1 - '1';
-            coorCol = c2 - 'a';
-        }
-        else{
-            coorRow = c2 - '1';
-            coorCol = c1 - 'a';
-        }
     }
 
     // Check whether the game is finished

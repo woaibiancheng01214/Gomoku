@@ -10,16 +10,16 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.input.MouseEvent;
 
 public class Oxo extends Application{
-    private final int HEIGHT = 14;
-    private final int WIDTH = 14;
-    private final int cellSize = 36;
+    private final int HEIGHT = 15;
+    private final int WIDTH = 15;
+    private final int cellSize = 40;
     private State state = new State(HEIGHT, WIDTH);
     private Display dis = new Display(HEIGHT, HEIGHT, WIDTH, cellSize);
     private char player = 'X';
     
-    JFXPanel fxPanel = new JFXPanel();
-    GraphicsContext g;
-    Button btn = new Button();
+    private JFXPanel fxPanel = new JFXPanel();
+    private GraphicsContext g;
+    private Button btn = new Button();
 
     public static void main(String args[]){
         Oxo program = new Oxo();
@@ -48,7 +48,7 @@ public class Oxo extends Application{
 		scene.setOnMousePressed(this::handleMouseEvent);
         btn.setOnAction(b -> {
             state.initBoard();
-            dis.resetGrid(state.getBoard(), g);
+            dis.clearGrid(state.getBoard(), g);
             state.state = Type.XTurn;
         });
         
