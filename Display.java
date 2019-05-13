@@ -15,6 +15,11 @@ import javafx.scene.image.Image;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.effect.DropShadow;
 
 public class Display{    
     private int cellSize;
@@ -50,17 +55,31 @@ public class Display{
         return lbl;
     }
 
-    public HBox getBottom(Button newGame, Button stopGame, Button surrender) {
+    public HBox getBottom(Button newGame, Button stopOrResumeGame) {
         HBox hbox = new HBox();
         hbox.prefWidthProperty().bind(root.widthProperty());
         hbox.setPrefHeight(borderSizeHeight);
         hbox.setStyle("-fx-border-style: dotted; -fx-border-width: 1 0 0 0; -fx-font-weight:bold");
-        hbox.getChildren().addAll(newGame, stopGame, surrender);
-        hbox.setMargin(newGame, new Insets(0, 10, 0, 10));
-        hbox.setMargin(stopGame, new Insets(0, 10, 0, 10));
-        hbox.setMargin(surrender, new Insets(0, 10, 0, 10));
+        hbox.getChildren().addAll(newGame, stopOrResumeGame);
         hbox.setAlignment(Pos.CENTER);
+        
+        modifyButton(newGame);
+        modifyButton(stopOrResumeGame);
         return hbox;
+    }
+
+    private void modifyButton(Button btn) {
+        btn.setPrefHeight(Double.MAX_VALUE);
+        btn.setPrefWidth(borderSizeWidth);
+        btn.setFont(new Font("Charcoal", 25));
+        btn.setStyle("-fx-background-color:#E99E40; -fx-background-radius: 10; -fx-background-insets: 5");
+        
+        btn.addEventHandler (MouseEvent.MOUSE_ENTERED, (MouseEvent e) ->{
+            btn.setEffect(new DropShadow());
+        });
+        btn.addEventHandler (MouseEvent.MOUSE_EXITED, (MouseEvent e) ->{
+            btn.setEffect(null);
+        });
     }
 
     public VBox getLeftPane(String player) {
@@ -163,6 +182,7 @@ public class Display{
         gcCenter.strokeText("GAME PAUSE", (WLIMIT + 1) * cellSize / 2, HLIMIT * cellSize / 2);
         gcCenter.fillText("GAME PAUSE", (WLIMIT + 1) * cellSize / 2, HLIMIT * cellSize / 2);
     }
+
     public void resetCenterGrid(char[][] b){
 		gcCenter.clearRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
 		drawCenter(b, 0.7);
