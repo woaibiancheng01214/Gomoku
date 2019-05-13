@@ -75,7 +75,7 @@ public class Display{
         btn.setPrefHeight(Double.MAX_VALUE);
         btn.setPrefWidth(borderSizeWidth);
         btn.setFont(new Font("Charcoal", 25));
-        btn.setStyle("-fx-background-color:rgba(233, 158, 64, 0.7); -fx-background-radius: 10; -fx-background-insets: 5");
+        setButtonStyle(btn, 0.7);
         
         btn.addEventHandler (MouseEvent.MOUSE_ENTERED, (MouseEvent e) ->{
             btn.setEffect(new DropShadow());
@@ -84,12 +84,12 @@ public class Display{
             btn.setEffect(null);
         });
         btn.addEventHandler (MouseEvent.MOUSE_PRESSED, (MouseEvent e) ->{
-            btn.setStyle("-fx-background-color: rgba(233, 158, 64, 0.3); -fx-background-radius: 10; -fx-background-insets: 5");
+            setButtonStyle(btn, 0.3);
         });
     }
 
-    public void resetButtonStyle(Button btn) {
-        btn.setStyle("-fx-background-color: rgba(233, 158, 64, 0.7); -fx-background-radius: 10; -fx-background-insets: 5");
+    public void setButtonStyle(Button btn, double opacity) {
+        btn.setStyle("-fx-background-color: rgba(233, 158, 64," + opacity + " ); -fx-background-radius: 10; -fx-background-insets: 5");
     }
 
     public VBox getLeftPane(String player) {
@@ -157,10 +157,6 @@ public class Display{
 
     public void drawRect(int x, int y) {
         gcCenter.strokeRoundRect(8 + x * cellSize, 8 + y * cellSize, cellSize * 2 / 3, cellSize * 2 / 3, 10, 10);
-        System.out.println(10 + x * cellSize);
-        System.out.println(10 + y * cellSize);
-        System.out.println(30 + x * cellSize);
-        System.out.println(30 + y * cellSize);
     }
 
     private void drawSideCanvas(GraphicsContext gc, Canvas canvas, String name, boolean myTurn) {

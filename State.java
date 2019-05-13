@@ -45,15 +45,8 @@ class State {
         }
     }
 
-    public boolean checkExist() {
-        if(b[coorCol][coorRow] != '_'){
-            return true;
-        }
-        return false;
-    }
-    
-    public boolean checkExist(int x, int y) {
-        if(b[y][x] != '_'){
+    public boolean checkExistAndOutOfBoard(int x, int y) {
+        if(y < HLIMIT && x < WLIMIT && b[y][x] == '_'){
             return true;
         }
         return false;
