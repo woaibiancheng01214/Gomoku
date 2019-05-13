@@ -1,7 +1,7 @@
 default: Gomoku
 
 JC = javac
-JFLAGS = --module-path "%PATH_TO_FX%" --add-modules=javafx.controls --add-modules=javafx.controls
+JFLAGS = --module-path "%PATH_TO_FX%" --add-modules=javafx.controls
 JVM = java
 RM = del
 

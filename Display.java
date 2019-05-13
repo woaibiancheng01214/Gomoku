@@ -32,7 +32,7 @@ public class Display{
     private int borderSizeWidth = 250;
     private BorderPane root;
     private GraphicsContext gcCenter;
-    static Canvas canvas;
+    private Canvas canvas;
 
     Display (int hlimit, int wlimit, int cellSize, BorderPane bp){
         this.HLIMIT = hlimit;
@@ -44,6 +44,9 @@ public class Display{
         this.root = bp;
     }
 
+    public Canvas getCanvas(){
+        return canvas;
+    }
     public Label getTopPane() {
         Label lbl = new Label("GOMOKU");
         lbl.prefWidthProperty().bind(root.widthProperty());
@@ -72,7 +75,7 @@ public class Display{
         btn.setPrefHeight(Double.MAX_VALUE);
         btn.setPrefWidth(borderSizeWidth);
         btn.setFont(new Font("Charcoal", 25));
-        btn.setStyle("-fx-background-color:#E99E40; -fx-background-radius: 10; -fx-background-insets: 5");
+        btn.setStyle("-fx-background-color:rgba(233, 158, 64, 0.7); -fx-background-radius: 10; -fx-background-insets: 5");
         
         btn.addEventHandler (MouseEvent.MOUSE_ENTERED, (MouseEvent e) ->{
             btn.setEffect(new DropShadow());
@@ -80,6 +83,13 @@ public class Display{
         btn.addEventHandler (MouseEvent.MOUSE_EXITED, (MouseEvent e) ->{
             btn.setEffect(null);
         });
+        btn.addEventHandler (MouseEvent.MOUSE_PRESSED, (MouseEvent e) ->{
+            btn.setStyle("-fx-background-color: rgba(233, 158, 64, 0.3); -fx-background-radius: 10; -fx-background-insets: 5");
+        });
+    }
+
+    public void resetButtonStyle(Button btn) {
+        btn.setStyle("-fx-background-color: rgba(233, 158, 64, 0.7); -fx-background-radius: 10; -fx-background-insets: 5");
     }
 
     public VBox getLeftPane(String player) {
@@ -95,6 +105,12 @@ public class Display{
         // source: https://www.crunchyroll.com/anime-news/2018/10/09-1/danmachi-memoria-freese-x-attack-on-titan-collaboration-coming-soon
         imageview.setFitWidth(borderSizeWidth);
         imageview.setFitHeight(300);
+        imageview.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent e) -> {
+            imageview.setStyle("-fx-image: url(levi.gif);");
+        });
+        imageview.addEventHandler(MouseEvent.MOUSE_EXITED, (MouseEvent e) -> {
+            imageview.setStyle("-fx-image: url(levi.jpg);");
+        });
 
         Canvas canvas = new Canvas();
         GraphicsContext gcleft = canvas.getGraphicsContext2D();
@@ -137,6 +153,14 @@ public class Display{
         gcCenter = canvas.getGraphicsContext2D();
         wrapperPane.getChildren().add(canvas);
         return wrapperPane;
+    }
+
+    public void drawRect(int x, int y) {
+        gcCenter.strokeRoundRect(8 + x * cellSize, 8 + y * cellSize, cellSize * 2 / 3, cellSize * 2 / 3, 10, 10);
+        System.out.println(10 + x * cellSize);
+        System.out.println(10 + y * cellSize);
+        System.out.println(30 + x * cellSize);
+        System.out.println(30 + y * cellSize);
     }
 
     private void drawSideCanvas(GraphicsContext gc, Canvas canvas, String name, boolean myTurn) {

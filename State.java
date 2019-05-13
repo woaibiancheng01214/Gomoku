@@ -51,6 +51,13 @@ class State {
         }
         return false;
     }
+    
+    public boolean checkExist(int x, int y) {
+        if(b[y][x] != '_'){
+            return true;
+        }
+        return false;
+    }
 
     // Check whether the game is finished
     public void nextState(){
