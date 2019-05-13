@@ -1,3 +1,3 @@
 enum Type{
-    XTurn, OTurn, player1win, player2win, draw;
+    blackTurn, whiteTurn, blackWin, whiteWin, draw;
 }

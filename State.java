@@ -1,4 +1,4 @@
-class State{
+class State {
     Type state;
     private int coorRow;
     private int coorCol;
@@ -7,7 +7,7 @@ class State{
     private char[][] b;
 
     State(int hlimit, int wlimit){
-        state = Type.XTurn;
+        state = Type.blackTurn;
         HLIMIT = hlimit;
         WLIMIT = wlimit;
         b = new char[HLIMIT][WLIMIT];
@@ -20,16 +20,6 @@ class State{
     public Type currentState(){
         return state;
     }
-    
-    // public use for control Oxo class
-    public int getCoor(char c){
-        if(c == 'Y'){
-            return coorCol;
-        }
-        else{
-            return coorRow;
-        }
-    }
 
     public void setCoor(int x, int y){
         coorRow = x;
@@ -38,7 +28,7 @@ class State{
     
     public void setChesspiece()
     {
-        if(state == Type.XTurn){
+        if(state == Type.blackTurn){
             b[coorCol][coorRow] = 'X';
         }
         else{
@@ -55,14 +45,11 @@ class State{
         }
     }
 
-    public CheckInfo checkExistAndOutOfBoard(){
-        if(coorCol < 0 || coorRow < 0 || coorCol >= HLIMIT || coorRow >= WLIMIT){
-            return CheckInfo.outOfBound;
-        }
+    public boolean checkExist() {
         if(b[coorCol][coorRow] != '_'){
-            return CheckInfo.alreadyExist;
+            return true;
         }
-        return CheckInfo.valid;
+        return false;
     }
 
     // Check whether the game is finished
@@ -112,7 +99,7 @@ class State{
             count++;
         }
         if(count == 5){
-            state = (currentChess == 'X') ? Type.player1win : Type.player2win;
+            state = (currentChess == 'X') ? Type.blackWin : Type.whiteWin;
             return true;
         }
         else{
@@ -131,7 +118,7 @@ class State{
             count++;
         }
         if(count == 5){
-            state = (currentChess == 'X') ? Type.player1win : Type.player2win;
+            state = (currentChess == 'X') ? Type.blackWin : Type.whiteWin;
             return true;
         }
         else{
@@ -153,7 +140,7 @@ class State{
             count++;
         }
         if(count == 5){
-            state = (currentChess == 'X') ? Type.player1win : Type.player2win;
+            state = (currentChess == 'X') ? Type.blackWin : Type.whiteWin;
             return true;
         }
         else{
@@ -175,7 +162,7 @@ class State{
             count++;
         }
         if(count == 5){
-            state = (currentChess == 'X') ? Type.player1win : Type.player2win;
+            state = (currentChess == 'X') ? Type.blackWin : Type.whiteWin;
             return true;
         }
         else{
@@ -183,11 +170,11 @@ class State{
         }
     }
     private void switchPlayer(){
-        if(state == Type.XTurn){
-            state = Type.OTurn;
+        if(state == Type.blackTurn){
+            state = Type.whiteTurn;
         }
         else{
-            state = Type.XTurn;
+            state = Type.blackTurn;
         }
     }
 

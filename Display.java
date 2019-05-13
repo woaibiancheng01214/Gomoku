@@ -1,130 +1,217 @@
-import java.util.Scanner;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.paint.Color;
+import javafx.scene.layout.Pane;
 
 public class Display{    
-    private String action;
-    private final Scanner reader = new Scanner(System.in);
     private int cellSize;
     private int halfCellSize;
-    private int cellsInARow = 0;
     private int HLIMIT;
     private int WLIMIT;
     private int wMargin;
     private int hMargin;
+    private int borderSizeHeight = 60;
+    private int borderSizeWidth = 250;
+    private BorderPane root;
+    private GraphicsContext gcCenter;
+    static Canvas canvas;
 
-    Display (int cellsInARow, int hlimit, int wlimit, int cellSize){
-        this.cellsInARow = cellsInARow;
+    Display (int hlimit, int wlimit, int cellSize, BorderPane bp){
         this.HLIMIT = hlimit;
         this.WLIMIT = wlimit;
         this.wMargin = cellSize / 6;
         this.hMargin = cellSize / 6;
         this.cellSize = cellSize;
         this.halfCellSize = cellSize / 2;
+        this.root = bp;
     }
 
-    public void clearGrid(char[][] b, GraphicsContext g){
-		g.clearRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
-		draw(g, b);
+    public Label getTopPane() {
+        Label lbl = new Label("GOMOKU");
+        lbl.prefWidthProperty().bind(root.widthProperty());
+        lbl.setPrefHeight(borderSizeHeight);
+        lbl.setStyle("-fx-border-style: dotted; -fx-border-width: 0 0 1 0; -fx-font-weight:bold");
+        lbl.setFont(new Font("Kalam", 30));
+        lbl.setAlignment(Pos.BASELINE_CENTER);
+        
+        return lbl;
+    }
+
+    public HBox getBottom(Button newGame, Button stopGame, Button surrender) {
+        HBox hbox = new HBox();
+        hbox.prefWidthProperty().bind(root.widthProperty());
+        hbox.setPrefHeight(borderSizeHeight);
+        hbox.setStyle("-fx-border-style: dotted; -fx-border-width: 1 0 0 0; -fx-font-weight:bold");
+        hbox.getChildren().addAll(newGame, stopGame, surrender);
+        hbox.setMargin(newGame, new Insets(0, 10, 0, 10));
+        hbox.setMargin(stopGame, new Insets(0, 10, 0, 10));
+        hbox.setMargin(surrender, new Insets(0, 10, 0, 10));
+        hbox.setAlignment(Pos.CENTER);
+        return hbox;
+    }
+
+    public VBox getLeftPane(String player) {
+        boolean myTurn;
+        if(player.equals("black")) 
+            myTurn = true;
+        else
+            myTurn = false;
+        VBox vbox = new VBox();
+        vbox.setStyle("-fx-border-style: dotted; -fx-border-width: 0 1 0 0");
+
+        ImageView imageview = new ImageView(new Image("levi.jpg"));
+        // source: https://www.crunchyroll.com/anime-news/2018/10/09-1/danmachi-memoria-freese-x-attack-on-titan-collaboration-coming-soon
+        imageview.setFitWidth(borderSizeWidth);
+        imageview.setFitHeight(300);
+
+        Canvas canvas = new Canvas();
+        GraphicsContext gcleft = canvas.getGraphicsContext2D();
+        String name = "Levi (black)";
+        drawSideCanvas(gcleft, canvas, name, myTurn);
+        vbox.getChildren().addAll(imageview, canvas);
+        vbox.setAlignment(Pos.TOP_CENTER);
+        return vbox;
+    }
+
+    public VBox getRightPane(String player) {
+        boolean myTurn;
+        if(player.equals("white") )
+            myTurn = true;
+        else
+            myTurn = false;
+        VBox vbox = new VBox();
+        vbox.setStyle("-fx-border-style: dotted; -fx-border-width: 0 0 0 1");
+
+        ImageView imageview = new ImageView(new Image("mikasa.jpg"));
+        // source: https://www.crunchyroll.com/anime-news/2018/10/09-1/danmachi-memoria-freese-x-attack-on-titan-collaboration-coming-soon
+        imageview.setFitWidth(borderSizeWidth);
+        imageview.setFitHeight(300);
+
+        Canvas canvas = new Canvas();
+        GraphicsContext gcleft = canvas.getGraphicsContext2D();
+        String name = "Mikasa (white)";
+        drawSideCanvas(gcleft, canvas, name, myTurn);
+        vbox.getChildren().addAll(imageview, canvas);
+        vbox.setAlignment(Pos.TOP_CENTER);
+
+        return vbox;
+    }
+
+    public Pane getCenterPane() {
+        // Create a wrapper Pane first
+        Pane wrapperPane = new Pane();
+        // Put canvas in the center of the window
+        canvas = new Canvas((WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
+        gcCenter = canvas.getGraphicsContext2D();
+        wrapperPane.getChildren().add(canvas);
+        return wrapperPane;
+    }
+
+    private void drawSideCanvas(GraphicsContext gc, Canvas canvas, String name, boolean myTurn) {
+        int canvasHeight = 300;
+        canvas.setWidth(borderSizeWidth);
+        canvas.setHeight(canvasHeight);
+        gc.clearRect(0, 0, borderSizeWidth, canvasHeight);
+        gc.setFill(Color.rgb(0, 0, 0, 0.5));
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.setTextAlign(TextAlignment.LEFT);
+        gc.setLineWidth(0.5);
+        gc.setStroke(Color.WHITE);
+        gc.setFill(Color.WHITE);
+        gc.setFont(new Font(16));
+        gc.fillText(name, 50, canvasHeight / 5);
+        gc.fillText("Total Match: 30", 50, canvasHeight * 2 / 5);
+        gc.fillText("Win Rate: 52%", 50, canvasHeight * 3 / 5);
+        gc.strokeText(name, 50, canvasHeight / 5);
+        gc.strokeText("Total Match: 30", 50, canvasHeight * 2 / 5);
+        gc.strokeText("Win Rate: 52%", 50, canvasHeight * 3 / 5);
+        if(myTurn){
+            gc.setFont(new Font(20));
+            gc.fillText("It's My Turn!", 50, canvasHeight * 4 / 5);
+            gc.strokeText("It's My Turn!", 50, canvasHeight * 4 / 5);
+        }
+    }
+
+    public void gameOverInfo(String s, String color) {
+        gcCenter.setTextAlign(TextAlignment.CENTER);
+        gcCenter.setFont(new Font("Merienda", 36));
+        gcCenter.setFill(Color.rgb(0, 0, 0));
+        if(color.equals("white")) {
+            gcCenter.setFill(Color.rgb(255, 255, 255));
+        }
+        gcCenter.strokeText(s, (WLIMIT + 1) * cellSize / 2, borderSizeHeight / 2);
+        gcCenter.fillText(s, (WLIMIT + 1) * cellSize / 2, borderSizeHeight / 2);
+    }
+
+    public void printPause() {
+        gcCenter.setTextAlign(TextAlignment.CENTER);
+        gcCenter.setFont(new Font("Merienda", 60));
+        gcCenter.setFill(Color.rgb(0, 0, 0, 0.5));
+        gcCenter.strokeText("GAME PAUSE", (WLIMIT + 1) * cellSize / 2, HLIMIT * cellSize / 2);
+        gcCenter.fillText("GAME PAUSE", (WLIMIT + 1) * cellSize / 2, HLIMIT * cellSize / 2);
+    }
+    public void resetCenterGrid(char[][] b){
+		gcCenter.clearRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
+		drawCenter(b, 0.7);
     }
     
-    public void draw(GraphicsContext g, char[][] b) {
-        g.clearRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
-        g.setFill(Color.rgb(233, 158, 64, 0.5));
-        g.fillRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
-		g.setLineWidth(3);
-		g.strokeRoundRect(halfCellSize, halfCellSize, WLIMIT * cellSize, HLIMIT * cellSize, 0, 0);
-		g.setLineWidth(1);
-		drawLines(g);
-		g.setLineWidth(3);
+    public void drawCenter(char[][] b, double bgopacity) {
+        gcCenter.clearRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
+        gcCenter.setFill(Color.rgb(233, 158, 64, bgopacity));
+        gcCenter.fillRect(0, 0, (WLIMIT + 1) * cellSize, (HLIMIT + 1) * cellSize);
+		gcCenter.setLineWidth(3);
+        gcCenter.setStroke(Color.rgb(0, 0, 0, 0.7));
+		gcCenter.strokeRoundRect(halfCellSize, halfCellSize, WLIMIT * cellSize, HLIMIT * cellSize, 0, 0);
+		gcCenter.setLineWidth(1);
+		drawLines(gcCenter);
+		gcCenter.setLineWidth(3);
 		for (int x = 0; x <= HLIMIT; x++) {
 			for (int y = 0; y <= WLIMIT; y++) {
 				char c = b[x][y];
-				if (c == 'O') drawO(g, cellSize*y, cellSize*x);
-				else if (c == 'X') drawX(g, cellSize*y, cellSize*x);
+				if (c == 'O') drawWhite(gcCenter, cellSize*y, cellSize*x);
+				else if (c == 'X') drawBlack(gcCenter, cellSize*y, cellSize*x);
 			}
 		}
     }
 
-    public void printText(GraphicsContext g, char player, int offset, String mainStr){
-		StringBuilder str = new StringBuilder(mainStr);
-		str.insert(offset, player);
-		g.clearRect(0, HLIMIT * cellSize + 10, WLIMIT * cellSize, HLIMIT * cellSize + 40);
-		g.setTextAlign(TextAlignment.CENTER);
-		g.setLineWidth(0.9);
-		g.strokeText(str.toString(), WLIMIT * 25, HLIMIT * cellSize + 20);
-	}
-
     private void drawLines(GraphicsContext g) {
-        int limit = cellsInARow * cellSize;
-        for(int i = 1; i < cellsInARow; i++){
-            g.strokeLine(i * cellSize + halfCellSize, halfCellSize, i * cellSize + halfCellSize, limit + halfCellSize);
+        int wLineLength = WLIMIT * cellSize;
+        int hLineLength = HLIMIT * cellSize;
+        // vertical lines
+        for(int i = 1; i < WLIMIT; i++){
+            g.strokeLine(i * cellSize + halfCellSize, halfCellSize, i * cellSize + halfCellSize, hLineLength + halfCellSize);
         }
-        for(int j = 1; j < cellsInARow; j++){
-            g.strokeLine(halfCellSize, j * cellSize + halfCellSize, limit + halfCellSize, j * cellSize + halfCellSize);
+        // horizontal lines
+        for(int j = 1; j < HLIMIT; j++){
+            g.strokeLine(halfCellSize, j * cellSize + halfCellSize, wLineLength + halfCellSize, j * cellSize + halfCellSize);
         }
 	}
     
-    private void drawO(GraphicsContext g, double x, double y) {
+    private void drawWhite(GraphicsContext g, double x, double y) {
+        g.setStroke(Color.rgb(0, 0, 0));
         g.strokeOval(wMargin + x, hMargin + y, cellSize - 2 * wMargin, cellSize - 2 * hMargin);
-        g.setFill(Color.WHITE);
+        g.setFill(Color.rgb(255, 255, 255));
         g.fillOval(wMargin + x, hMargin + y, cellSize - 2 * wMargin, cellSize - 2 * hMargin);
 	}
 
-	private void drawX(GraphicsContext g, double x, double y) {
-		// g.strokeLine(wMargin+x, hMargin+y, cellSize - wMargin+x, cellSize - hMargin+y);
-        // g.strokeLine(wMargin+x, cellSize - hMargin+y, cellSize - wMargin+x, hMargin+y);
+	private void drawBlack(GraphicsContext g, double x, double y) {
+        g.setStroke(Color.rgb(0, 0, 0));
         g.strokeOval(wMargin + x, hMargin + y, cellSize - 2 * wMargin, cellSize - 2 * hMargin);
-        g.setFill(Color.BLACK);
+        g.setFill(Color.rgb(0, 0, 0));
         g.fillOval(wMargin + x, hMargin + y, cellSize - 2 * wMargin, cellSize - 2 * hMargin);
-    }
-    
-    public String chooseDisplayMode(){
-        System.out.println("Choose a mode for this game " +
-            "1 for text, 2 for graphics");
-        String mode = reader.next();
-        return mode;
-    }
-
-    public String playerInput(char player, boolean vaildInput)
-    {
-        if(player == 'X'){
-            action = scanner('X', vaildInput);
-            return action;
-        }
-        if(player == 'O'){
-            action = scanner('O', vaildInput);
-            return action;
-        }
-        action = null;
-        return action;
-    }
-
-    public void errorMsg(CheckInfo msg)
-    {
-        if(msg == CheckInfo.valid){
-            return;
-        }
-        else if(msg == CheckInfo.invalidLength){
-            System.out.println("invalid length of input. A number and a letter required");
-        }
-        else if(msg == CheckInfo.invalidType){
-            System.out.println("invalid type of input. A number and a letter required. Example: 1a/2b/3c");
-        }
-        else if(msg == CheckInfo.outOfBound){
-            System.out.println("Out of chessboard (vaild field: 1~3 a~c)");
-        }
-        else {
-            System.out.println("Cannot select a place already exist a 'X' or 'O'!");
-        }
-        System.out.println("Please re-enter:");
-    }
-
-    public void closeReader()
-    {
-        reader.close();
     }
 
     // print a paradigm of board which is extendable
@@ -143,30 +230,5 @@ public class Display{
             }
             System.out.printf("\n");
         }
-    }
-
-    public void printResult(Type result)
-    {
-        if(result == Type.player1win){
-            System.out.println("Player1(X) wins!");
-        }
-        else if(result == Type.player2win){
-            System.out.println("Player2(O) wins!");
-        }
-        else if(result == Type.draw){
-            System.out.println("draw!");
-        }
-        else
-            System.out.println("Fatal error: NULL result!");
-    }
-
-    private String scanner(char player, boolean vaildInput)
-    {
-        if(vaildInput == true){
-            System.out.printf("\nPlayer(%c) turn, please " +
-                "type a coordinate: \n", player == 'X' ? 'X' : 'O');
-        }
-        String s = reader.next();
-        return s;
     }
 }
